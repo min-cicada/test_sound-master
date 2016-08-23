@@ -5,8 +5,6 @@ package com.example.fuji_16.test_sound;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.content.Intent;
-import android.util.Log;
 
 /**
  * Created by fuji_16 on 2016/08/22.
@@ -23,7 +21,10 @@ public class SoundSwitch implements Runnable {
     private static final int SAMPLE_RATE = 8000;//80.0KHz
 
     // ボーダー音量
-    private short mBorderVolume = 10000;
+    private short mBorderVolume = 100;
+
+    static short max = 0;
+    static short average = 0;
 
 
     // ボーダー音量をセット
@@ -52,7 +53,7 @@ public class SoundSwitch implements Runnable {
         mListener = listener;
     }
     // ボーダー音量を検知した時のためのリスナー
-    public interface OnReachedVolumeListener {// ボーダー音量を超える音量を検知した時に呼び出されるメソッドです。
+    public interface OnReachedVolumeListener {//ボーダー音量を超える音量を検知した時に呼び出されるメソッドです。
 
         void onReachedVolume(short volume);
 
@@ -75,11 +76,17 @@ public class SoundSwitch implements Runnable {
         audioRecord.startRecording();
         while(isRecoding) {
             audioRecord.read(buffer, 0, bufferSize);
-            short max = 0;
+            //short max = 0;
             for (int i=0; i<bufferSize; i++) {// 最大音量を計算
+                average=buffer[i];
                 max = (short)Math.max(max, buffer[i]);// 最大音量がボーダーを超えていたら
-            }
 
+            }
+            try{
+                Thread.sleep(1000);
+            }catch (InterruptedException e){
+            }
+            max=0;
 
 
 

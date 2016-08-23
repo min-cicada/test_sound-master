@@ -21,7 +21,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        short max =0;
         super.onCreate(savedInstanceState);
+
+
 
 
         setContentView(R.layout.activity_main);
@@ -46,19 +49,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     onResume();
                 }
                 textView.setText("適音開始");
-                textView2.setText(String.valueOf(rokuon));
-                //textView2.setText("うるさい音がなっている");
-                textView3.setText(String.valueOf(flag));
-                flag = 1;
+                textView2.setText(SoundSwitch.max+"デシベル");
+                textView3.setText(String.valueOf(rokuon));
                 break;
             case R.id.stop_button:    //終了ボタン(id=stopbutton)が押された時
                 if (rokuon == true) {
                     onPause();
                 }
                 textView.setText("適音終了");
-                textView2.setText(String.valueOf(rokuon));
+                textView2.setText(SoundSwitch.max+"デシベル");
                 textView3.setText(String.valueOf(flag));
-                flag = 2;
                 break;
 
         }
@@ -68,13 +68,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onResume();
         mSoundSwitch = new SoundSwitch();// リスナーを登録して音を感知できるように
         rokuon = mSoundSwitch.start();
-        flag = 4;
         mSoundSwitch.setOnVolumeReachedListener(
                 /*この辺りが古川わからないです助けて*/
                 new SoundSwitch.OnReachedVolumeListener() {// 音を感知したら呼び出される
-                    public void onReachedVolume(short volume) {// 別スレッドからUIスレッドに要求するのでHandler.postでエラー回避
-                        mHandler.post(new Runnable() {//Runnableに入った要求を順番にLoopでrunを呼び出し処理
+                    public void onReachedVolume(short volume) {//別スレッドからUIスレッドに要求するのでHandler.postでエラー回避
+                        mHandler.post(new Runnable()
+                        {//Runnableに入った要求を順番にLoopでrunを呼び出し処理
                             public void run() {
+                                //
+                                // textView2.setText("デシベル");
+
                                 //ここにもともと画面の色を変えるプログラムが一行あった
                             }
                         });
@@ -86,7 +89,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
     }
     @Override
     public void onPause() {
-        flag = 3;
 
         //Activityの状態がonPauseの時の処理
         super.onPause();//superクラスのonPauseを呼び出す
