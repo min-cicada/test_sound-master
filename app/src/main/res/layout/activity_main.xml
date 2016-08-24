@@ -80,7 +80,7 @@ tools:context="com.example.fuji_16.test_sound.MainActivity">
     android:layout_alignParentTop="true"
     android:layout_centerHorizontal="true" />
 
-
+<!--
 
 
     <TextView
@@ -94,5 +94,6 @@ tools:context="com.example.fuji_16.test_sound.MainActivity">
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
+-->
 </RelativeLayout>
 

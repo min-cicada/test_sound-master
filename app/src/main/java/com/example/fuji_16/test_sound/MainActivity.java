@@ -7,7 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -23,7 +24,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         short max =0;
         super.onCreate(savedInstanceState);
-
+        mTimer.schedule(mTimerTask,0,500);
 
 
 
@@ -41,7 +42,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {//ボタンが押された処理すべて
         TextView textView=(TextView)findViewById(R.id.mainText);
         TextView textView2=(TextView)findViewById(R.id.SouonText);//デバック用
-        TextView textView3=(TextView)findViewById(R.id.debug);//デバック用
+        //TextView textView3=(TextView)findViewById(R.id.debug);//デバック用
 
         switch(v.getId()) {
             case R.id.start_button:    //開始ボタン(id=startbutton)が押された時
@@ -49,16 +50,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     onResume();
                 }
                 textView.setText("適音開始");
-                textView2.setText(SoundSwitch.max+"デシベル");
-                textView3.setText(String.valueOf(rokuon));
+                textView2.setText("騒音量:"+SoundSwitch.max+"");
+                //textView3.setText(String.valueOf(rokuon));
                 break;
             case R.id.stop_button:    //終了ボタン(id=stopbutton)が押された時
                 if (rokuon == true) {
                     onPause();
                 }
                 textView.setText("適音終了");
-                textView2.setText(SoundSwitch.max+"デシベル");
-                textView3.setText(String.valueOf(flag));
+                textView2.setText("騒音量:"+SoundSwitch.max+"");
+               // textView3.setText(String.valueOf(flag));
                 break;
 
         }
@@ -68,10 +69,12 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onResume();
         mSoundSwitch = new SoundSwitch();// リスナーを登録して音を感知できるように
         rokuon = mSoundSwitch.start();
+        //mTimer.schedule(mTimerTask,0,500);
         mSoundSwitch.setOnVolumeReachedListener(
                 /*この辺りが古川わからないです助けて*/
                 new SoundSwitch.OnReachedVolumeListener() {// 音を感知したら呼び出される
-                    public void onReachedVolume(short volume) {//別スレッドからUIスレッドに要求するのでHandler.postでエラー回避
+                    public void onReachedVolume(short volume)
+                    {//別スレッドからUIスレッドに要求するのでHandler.postでエラー回避
                         mHandler.post(new Runnable()
                         {//Runnableに入った要求を順番にLoopでrunを呼び出し処理
                             public void run() {
@@ -95,5 +98,20 @@ public class MainActivity extends Activity implements View.OnClickListener{
         rokuon= mSoundSwitch.stop();// 録音を停止
     }
 
+    public class MainTimeTask extends TimerTask{
+        @Override
+        public void run(){
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    TextView textView5=(TextView)findViewById(R.id.SouonText);//デバック用
+                    textView5.setText("騒音量:"+SoundSwitch.max+"");
+                }
+            });
+        }
+    }
+    Timer mTimer= new Timer();
+    TimerTask mTimerTask=new MainTimeTask();
+    Handler getmHandler = new Handler();
 
 }
